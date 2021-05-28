@@ -1,8 +1,6 @@
 import fs from "fs";
 
-export const hammingDistance = (string1: string, string2: string): number => {
-  const buf1 = Buffer.from(string1, "utf-8");
-  const buf2 = Buffer.from(string2, "utf-8");
+export const hammingDisanceBuffer = (buf1: Buffer, buf2: Buffer): number => {
   let distance = 0;
   const length = Math.max(buf1.length, buf2.length);
   const buffer: Array<number> = [];
@@ -15,6 +13,12 @@ export const hammingDistance = (string1: string, string2: string): number => {
     }
   }
   return distance;
+};
+
+export const hammingDistance = (string1: string, string2: string): number => {
+  const buf1 = Buffer.from(string1, "utf-8");
+  const buf2 = Buffer.from(string2, "utf-8");
+  return hammingDisanceBuffer(buf1, buf2);
 };
 
 export const breakRepeatingXorFile = (filePath: string): string => {
