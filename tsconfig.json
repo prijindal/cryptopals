@@ -9,9 +9,9 @@
     "target": "es2018",
     "skipLibCheck": true,
     "noImplicitAny": true,
+    "noEmit": true,
     "moduleResolution": "Node",
     "sourceMap": true,
-    "outDir": "dist",
     "baseUrl": ".",
     "types": [
       "node"
@@ -26,8 +26,5 @@
   "include": [
     "src",
     "node_modules/@types/jest"
-  ],
-  "exclude": [
-    "dist"
   ]
 }
