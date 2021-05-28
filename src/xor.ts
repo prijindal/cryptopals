@@ -1,4 +1,4 @@
-const bufferXor = function xor(a: Buffer, b: Buffer): Buffer {
+export const bufferXor = function xor(a: Buffer, b: Buffer): Buffer {
   const length = Math.max(a.length, b.length);
   const buffer = Buffer.allocUnsafe(length);
 
