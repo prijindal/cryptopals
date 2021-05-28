@@ -1,50 +1,84 @@
-const VALID_ALPHABETS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+const INVALID_CHARACTERS = [
+  "*",
+  "-",
+  "\n",
+  "#",
+  "\\",
+  "/",
+  "!",
+  "&",
+  "|",
+  "_",
+  "�",
+  "^",
+  "~",
+  "`",
+  "{",
+  "}",
+  ":",
+  "%",
+  "(",
+  ")",
+  "=",
+  "<",
+  ">",
+  "[",
+  "]",
+  "@",
+  "+",
+];
 
 const occurance_english: { [k: string]: number } = {
-  a: 8.2389258,
-  b: 1.5051398,
-  c: 2.8065007,
-  d: 4.2904556,
-  e: 12.813865,
-  f: 2.2476217,
-  g: 2.0327458,
-  h: 6.1476691,
-  i: 6.1476691,
-  j: 0.1543474,
-  k: 0.7787989,
-  l: 4.0604477,
-  m: 2.4271893,
-  n: 6.8084376,
-  o: 7.5731132,
-  p: 1.9459884,
-  q: 0.0958366,
-  r: 6.0397268,
-  s: 6.3827211,
-  t: 9.1357551,
-  u: 2.7822893,
-  v: 0.9866131,
-  w: 2.3807842,
-  x: 0.151321,
-  y: 1.9913847,
-  z: 0.0746517,
-  "*": 0,
-  "\n": 0,
+  a: 0.0651738,
+  b: 0.0124248,
+  c: 0.0217339,
+  d: 0.0349835,
+  e: 0.1041442,
+  f: 0.0197881,
+  g: 0.015861,
+  h: 0.0492888,
+  i: 0.0558094,
+  j: 0.0009033,
+  k: 0.0050529,
+  l: 0.033149,
+  m: 0.0202124,
+  n: 0.0564513,
+  o: 0.0596302,
+  p: 0.0137645,
+  q: 0.0008606,
+  r: 0.0497563,
+  s: 0.051576,
+  t: 0.0729357,
+  u: 0.0225134,
+  v: 0.0082903,
+  w: 0.0171272,
+  x: 0.0013692,
+  y: 0.0145984,
+  z: 0.0007836,
+  " ": 0.1918182,
 };
 
 export const scoreUtfString = (utfString: string): number => {
+  utfString = utfString.replace(/\n/g, " ");
   const frequencies: { [k: string]: number } = {};
-  for (const iterator of Object.keys(occurance_english)) {
-    frequencies[iterator] = 0;
-  }
   for (let index = 0; index < utfString.length; index++) {
     const element = utfString[index];
-    if (frequencies[element.toLowerCase()] != null) {
-      frequencies[element.toLowerCase()] += (1 / utfString.length) * 100;
+    if (frequencies[element.toLowerCase()] == null) {
+      frequencies[element.toLowerCase()] = 0;
     }
+    frequencies[element.toLowerCase()] += (1 / utfString.length) * 100;
   }
   let score = 0;
-  for (const iterator of Object.keys(occurance_english)) {
-    score += Math.abs(frequencies[iterator] - occurance_english[iterator]);
+  for (const iterator of Object.keys(frequencies)) {
+    let occurance_score = occurance_english[iterator];
+    if (occurance_score == null) {
+      if (INVALID_CHARACTERS.indexOf(iterator) >= 0) {
+        occurance_score = -100;
+      } else {
+        occurance_score = 0;
+      }
+    }
+    score += Math.abs(frequencies[iterator] - occurance_score);
   }
   return score;
 };

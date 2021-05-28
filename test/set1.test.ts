@@ -1,6 +1,7 @@
 import { hexToBase64 } from "../src/base64";
 import { hexXor } from "../src/xor";
-import { hexSingleByteXorDecipher } from "../src/singleByteXor";
+import { hexSingleByteXorDecipher, scoreUtfString } from "../src/singleByteXor";
+import { xorEachLine } from "../src/xorFile";
 
 describe("hexToBase64 test", () => {
   it("Sample hex test", () => {
@@ -26,11 +27,33 @@ describe("hexXor test", () => {
 });
 
 describe("Deciher singleByteXorCipher", () => {
+  it("Scoring function", () => {
+    expect(scoreUtfString("Ieeacdm*GI-y*fcao*k*zedn*el*hkied")).toBeGreaterThan(
+      scoreUtfString("Cooking MC's like a pound of bacon")
+    );
+    expect(scoreUtfString("Yuuqst}:WY=i:vsq:{:juot~:u|:x{yut")).toBeGreaterThan(
+      scoreUtfString("Cooking MC's like a pound of bacon")
+    );
+    expect(scoreUtfString("zmSmH�IReCWKn@dGfSjeMr")).toBeGreaterThan(
+      scoreUtfString("Now that the party is jumping\n")
+    );
+    expect(scoreUtfString("xoQoJKPgAUIlBfEdQhgOp")).toBeGreaterThan(
+      scoreUtfString("Now that the party is jumping\n")
+    );
+  });
   it("Sample hex test", () => {
     expect(
       hexSingleByteXorDecipher(
         "1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736"
       )
     ).toEqual("Cooking MC's like a pound of bacon");
+  });
+});
+
+describe("Detect single-character XOR in a file", () => {
+  it("Sample hex test", () => {
+    expect(xorEachLine("test/4.txt")).toEqual(
+      "Now that the party is jumping\n"
+    );
   });
 });
