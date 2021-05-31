@@ -1,33 +1,3 @@
-const INVALID_CHARACTERS = [
-  "*",
-  "-",
-  "\n",
-  "#",
-  "\\",
-  "/",
-  "!",
-  "&",
-  "|",
-  "_",
-  "�",
-  "^",
-  "~",
-  "`",
-  "{",
-  "}",
-  ":",
-  "%",
-  "(",
-  ")",
-  "=",
-  "<",
-  ">",
-  "[",
-  "]",
-  "@",
-  "+",
-];
-
 const occurance_english: { [k: string]: number } = {
   a: 0.0651738,
   b: 0.0124248,
@@ -59,38 +29,44 @@ const occurance_english: { [k: string]: number } = {
 };
 
 export const scoreUtfString = (utfString: string): number => {
-  utfString = utfString.replace(/\n/g, " ");
   const frequencies: { [k: string]: number } = {};
   for (let index = 0; index < utfString.length; index++) {
     const element = utfString[index];
     if (frequencies[element.toLowerCase()] == null) {
       frequencies[element.toLowerCase()] = 0;
     }
-    frequencies[element.toLowerCase()] += (1 / utfString.length) * 100;
+    frequencies[element.toLowerCase()] += 1 / utfString.length;
+  }
+  const keysInString = [];
+  for (const key of Object.keys(frequencies)) {
+    if (Object.keys(occurance_english).indexOf(key) >= 0) {
+      keysInString.push(key);
+    }
+  }
+  if (keysInString.length == 0) {
+    return Infinity;
   }
   let score = 0;
   for (const iterator of Object.keys(frequencies)) {
     let occurance_score = occurance_english[iterator];
     if (occurance_score == null) {
-      if (INVALID_CHARACTERS.indexOf(iterator) >= 0) {
-        occurance_score = -100;
-      } else {
-        occurance_score = 0;
-      }
+      occurance_score = 0;
     }
     score += Math.abs(frequencies[iterator] - occurance_score);
   }
   return score;
 };
 
-export const hexSingleByteXorDecipher = (hexString: string): string => {
+export const hexSingleByteXorDecipher = (
+  hexString: string
+): { key: string; answer: string } => {
   const hexBuffer = Buffer.from(hexString, "hex");
   //   const utf8String = hexBuffer.toString("utf-8");
   const possibleKeys: Array<string> = [];
   for (let index = 0; index < 255; index++) {
     possibleKeys.push(index.toString(16));
   }
-  const possibleAnswers: Array<string> = [];
+  const possibleAnswers: Array<{ key: string; answer: string }> = [];
   for (const possibleKey of possibleKeys) {
     const keyBuffer = Buffer.from(possibleKey, "hex");
     const buffer = Buffer.allocUnsafe(hexBuffer.length);
@@ -98,12 +74,15 @@ export const hexSingleByteXorDecipher = (hexString: string): string => {
     for (let i = 0; i < hexBuffer.length; ++i) {
       buffer[i] = hexBuffer[i] ^ keyBuffer[0];
     }
-    possibleAnswers.push(buffer.toString("utf-8"));
+    possibleAnswers.push({
+      key: keyBuffer.toString("ascii"),
+      answer: buffer.toString("ascii"),
+    });
   }
   let probableAnswer = possibleAnswers[0];
-  let lowestScore = scoreUtfString(possibleAnswers[0]);
+  let lowestScore = scoreUtfString(possibleAnswers[0].answer);
   for (const possibleAnswer of possibleAnswers) {
-    const score = scoreUtfString(possibleAnswer);
+    const score = scoreUtfString(possibleAnswer.answer);
     if (score < lowestScore) {
       probableAnswer = possibleAnswer;
       lowestScore = score;
