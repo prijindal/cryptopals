@@ -7,6 +7,7 @@ import {
   breakRepeatingXorFile,
   hammingDistance,
 } from "../src/breakRepeatingXor";
+import { decryptAesFile, encryptAes, decryptAes } from "../src/aes";
 
 describe("hexToBase64 test", () => {
   it("Sample hex test", () => {
@@ -86,6 +87,21 @@ describe("Breaking repeating-key xor", () => {
     expect(solution.key).toEqual("Terminator X: Bring the noise");
     expect(
       solution.answer.indexOf("I'm back and I'm ringin' the bell")
+    ).toEqual(0);
+  });
+});
+
+describe("Aes decrypt", () => {
+  it("Simple aes decrypt/encrypt", () => {
+    const encrypted = encryptAes("HELLO", "YELLOW SUBMARINE");
+    const decrypted = decryptAes(encrypted, "YELLOW SUBMARINE");
+    expect(decrypted).toEqual("HELLO");
+  });
+  it("Test decryption", () => {
+    expect(
+      decryptAesFile("test/1/7.txt", "YELLOW SUBMARINE").indexOf(
+        "I'm back and I'm ringin' the bell"
+      )
     ).toEqual(0);
   });
 });
