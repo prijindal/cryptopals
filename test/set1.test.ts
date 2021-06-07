@@ -95,6 +95,7 @@ describe("Breaking repeating-key xor", () => {
 describe("Aes decrypt", () => {
   it("Simple aes decrypt/encrypt", () => {
     const encrypted = encryptAes("HELLO", "YELLOW SUBMARINE");
+    expect(encrypted).toEqual("gRUs6UtyYgC3J5FD5tjxxQ==");
     const decrypted = decryptAes(encrypted, "YELLOW SUBMARINE");
     expect(decrypted).toEqual("HELLO");
   });

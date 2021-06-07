@@ -1,4 +1,5 @@
 import fs from "fs";
+import { splitBuffer } from "./helper";
 import { utfRepeatingXor } from "./repeatingXor";
 import { hexSingleByteXorDecipher, scoreUtfString } from "./singleByteXor";
 
@@ -21,16 +22,6 @@ export const hammingDistance = (string1: string, string2: string): number => {
   const buf1 = Buffer.from(string1, "ascii");
   const buf2 = Buffer.from(string2, "ascii");
   return hammingDisanceBuffer(buf1, buf2);
-};
-
-const splitBuffer = (buf: Buffer, length: number): Array<Buffer> => {
-  const fileContentSplit = [];
-  let bytes = buf;
-  while (bytes.length > 0) {
-    fileContentSplit.push(bytes.subarray(0, length));
-    bytes = bytes.subarray(length);
-  }
-  return fileContentSplit;
 };
 
 const transposeBlocks = (

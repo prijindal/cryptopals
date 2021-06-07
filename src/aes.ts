@@ -1,18 +1,32 @@
 import crypto from "crypto";
 import fs from "fs";
 
-export const encryptAes = (text: string, key: string): string => {
+export const encryptAesBuffer = (text: Buffer, key: Buffer): Buffer => {
   const decipher = crypto.createCipheriv("aes-128-ecb", key, "");
-  let dec = decipher.update(text, "utf-8", "base64");
-  dec += decipher.final("base64");
+  let dec = decipher.update(text);
+  dec = Buffer.concat([dec, decipher.final()]);
+  return dec;
+};
+
+export const encryptAes = (text: string, key: string): string => {
+  return encryptAesBuffer(
+    Buffer.from(text, "utf-8"),
+    Buffer.from(key, "utf-8")
+  ).toString("base64");
+};
+
+export const decryptAesBuffer = (text: Buffer, key: Buffer): Buffer => {
+  const decipher = crypto.createDecipheriv("aes-128-ecb", key, "");
+  let dec = decipher.update(text);
+  dec = Buffer.concat([dec, decipher.final()]);
   return dec;
 };
 
 export const decryptAes = (text: string, key: string): string => {
-  const decipher = crypto.createDecipheriv("aes-128-ecb", key, "");
-  let dec = decipher.update(text, "base64", "utf-8");
-  dec = dec + decipher.final();
-  return dec;
+  return decryptAesBuffer(
+    Buffer.from(text, "base64"),
+    Buffer.from(key, "utf-8")
+  ).toString("utf-8");
 };
 
 export const decryptAesFile = (filePath: string, key: string): string => {

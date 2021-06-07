@@ -1,14 +1,5 @@
 import fs from "fs";
-
-const splitBuffer = (buf: Buffer, length: number): Array<Buffer> => {
-  const fileContentSplit = [];
-  let bytes = buf;
-  while (bytes.length > 0) {
-    fileContentSplit.push(bytes.subarray(0, length));
-    bytes = bytes.subarray(length);
-  }
-  return fileContentSplit;
-};
+import { splitBuffer } from "./helper";
 
 export const detectAesEcb = (buf: Buffer): boolean => {
   const splited = splitBuffer(buf, 16);
