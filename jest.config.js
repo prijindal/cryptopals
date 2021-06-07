@@ -15,17 +15,13 @@ const commonConfig = {
 
 module.exports = {
   projects: [
-    // {
-    //   ...commonConfig,
-    //   testEnvironment: "jsdom",
-    // },
     {
       ...commonConfig,
       testEnvironment: "node",
     },
-    // {
-    //   ...commonConfig,
-    //   preset: "jest-puppeteer",
-    // },
+    {
+      ...commonConfig,
+      preset: "jest-puppeteer",
+    },
   ],
 };
