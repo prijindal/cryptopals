@@ -1,6 +1,8 @@
 import fs from "fs";
+import lodash from "lodash";
 import { pkcs7Padding } from "../src/pkcs7";
 import { cbcEncrypt, cbcDecrypt } from "../src/cbc";
+import { encryptionOracle, detectEcbOrCbcFunction } from "../src/blackboxCbc";
 
 describe("PKCS#7 Padding", () => {
   it("Test padding", () => {
@@ -56,5 +58,16 @@ describe("CBC Encryption", () => {
         "Play that funky music Come on, Come on, let me hear"
       ) >= 0
     ).toEqual(true);
+  });
+  describe("Detects ECB or CBC", () => {
+    it("Finds out if function is cbc or ecb", () => {
+      for (let index = 0; index < 100; index++) {
+        const mode = lodash.random(0, 1) == 0 ? "CBC" : "ECB";
+        const fn = (buf: Buffer): Buffer => {
+          return encryptionOracle(buf, mode);
+        };
+        expect(detectEcbOrCbcFunction(fn)).toEqual(mode);
+      }
+    });
   });
 });
